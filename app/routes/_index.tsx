@@ -3,6 +3,14 @@ import { Link, useLoaderData } from "@remix-run/react";
 import { Button } from "~/components/ui/button";
 import prisma from "~/lib/db.server";
 
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "~/components/ui/card";
+
 export const meta: MetaFunction = () => {
   return [
     { title: "New Remix App" },
@@ -30,12 +38,26 @@ export default function Index() {
       </div>
 
       {posts.length > 0 ? (
-        posts.map((post) => (
-          <div key={post.id}>
-            <p>{post.title}</p>
-            <p>{post.content}</p>
-          </div>
-        ))
+        <div className="space-y-5">
+          {posts.map((post) => (
+            <Card key={post.id}>
+              <CardHeader>
+                <Link to={`/posts/${post.id}`}>
+                  <CardTitle className="cursor-pointer truncate text-xl font-semibold hover:underline">
+                    {post.title}
+                  </CardTitle>
+                </Link>
+              </CardHeader>
+              <CardContent className="line-clamp-5">
+                <p>{post.content}</p>
+              </CardContent>
+              <CardFooter className="flex items-center gap-x-3 mt-5">
+                <Button variant={"secondary"}>Edit</Button>
+                <Button variant={"destructive"}>Delete</Button>
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
       ) : (
         <p className="my-8 text-center text-muted-foreground">No post yet!</p>
       )}

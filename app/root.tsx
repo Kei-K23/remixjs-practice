@@ -4,10 +4,17 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useNavigation,
 } from "@remix-run/react";
-import type { LinksFunction } from "@remix-run/node";
+import { type LinksFunction } from "@remix-run/node";
+import { useEffect } from "react";
+
+import NProgress from "nprogress";
+
+import "nprogress/nprogress.css";
 
 import styles from "./tailwind.css?url";
+import { Toaster } from "./components/ui/sonner";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: styles },
@@ -24,6 +31,16 @@ export const links: LinksFunction = () => [
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    if (navigation.state === "loading") {
+      NProgress.start();
+    } else {
+      NProgress.done();
+    }
+  }, [navigation]);
+
   return (
     <html lang="en">
       <head>
@@ -34,6 +51,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         {children}
+        <Toaster />
         <ScrollRestoration />
         <Scripts />
       </body>

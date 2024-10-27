@@ -21,13 +21,17 @@
     "clsx": "^2.1.1",
     "isbot": "^4.1.0",
     "lucide-react": "^0.453.0",
+    "next-themes": "^0.3.0",
+    "nprogress": "^0.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "sonner": "^1.5.0",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@remix-run/dev": "^2.13.1",
+    "@types/nprogress": "^0.2.3",
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",
     "@typescript-eslint/eslint-plugin": "^6.7.4",

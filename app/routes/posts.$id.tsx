@@ -39,7 +39,7 @@ export default function PostIdPage() {
 
         <div className="flex gap-4 mt-8">
           <Button asChild>
-            <Link to={`/posts/${post.id}/edit`}>Edit Post</Link>
+            <Link to={`/posts/edit/${post.id}`}>Edit Post</Link>
           </Button>
           <Button asChild variant="destructive">
             <Link to={`/posts/${post.id}/delete`}>Delete Post</Link>

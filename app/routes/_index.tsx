@@ -52,7 +52,9 @@ export default function Index() {
                 <p>{post.content}</p>
               </CardContent>
               <CardFooter className="flex items-center gap-x-3 mt-5">
-                <Button variant={"secondary"}>Edit</Button>
+                <Button variant={"secondary"} asChild>
+                  <Link to={`/posts/edit/${post.id}`}>Edit</Link>
+                </Button>
                 <Button variant={"destructive"}>Delete</Button>
               </CardFooter>
             </Card>

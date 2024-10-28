@@ -1,6 +1,15 @@
-import { json, LoaderFunctionArgs } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import { ActionFunctionArgs, json, LoaderFunctionArgs } from "@remix-run/node";
+import { Form, Link, redirect, useLoaderData } from "@remix-run/react";
 import { Button } from "~/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "~/components/ui/dialog";
 import prisma from "~/lib/db.server";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
@@ -16,6 +25,17 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 
   return json({ post });
 };
+
+export async function action({ request }: ActionFunctionArgs) {
+  const body = await request.formData();
+  const id = body.get("id") as string;
+
+  await prisma.post.delete({
+    where: { id },
+  });
+
+  return redirect(`/`);
+}
 
 export default function PostIdPage() {
   const { post } = useLoaderData<typeof loader>();
@@ -41,9 +61,27 @@ export default function PostIdPage() {
           <Button asChild>
             <Link to={`/posts/edit/${post.id}`}>Edit Post</Link>
           </Button>
-          <Button asChild variant="destructive">
-            <Link to={`/posts/${post.id}/delete`}>Delete Post</Link>
-          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="destructive">Delete Post</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Are you absolutely sure?</DialogTitle>
+                <DialogDescription>
+                  This action cannot be undone. This will permanently delete
+                  this blog post.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Form method="POST">
+                  <input type="hidden" name="id" value={post.id} />
+                  <Button variant={"destructive"}>Confirm</Button>
+                </Form>
+                <Button>Cancel</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
     </div>

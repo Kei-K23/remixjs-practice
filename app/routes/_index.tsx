@@ -1,7 +1,17 @@
-import { json, type MetaFunction } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import { ActionFunctionArgs, json, type MetaFunction } from "@remix-run/node";
+import { Form, Link, useLoaderData } from "@remix-run/react";
 import { Button } from "~/components/ui/button";
 import prisma from "~/lib/db.server";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "~/components/ui/dialog";
 
 import {
   Card,
@@ -25,6 +35,17 @@ export async function loader() {
   return json({ posts });
 }
 
+export async function action({ request }: ActionFunctionArgs) {
+  const body = await request.formData();
+  const id = body.get("id") as string;
+
+  await prisma.post.delete({
+    where: { id },
+  });
+
+  return null;
+}
+
 export default function Index() {
   const { posts } = useLoaderData<typeof loader>();
 
@@ -38,7 +59,7 @@ export default function Index() {
       </div>
 
       {posts.length > 0 ? (
-        <div className="space-y-5">
+        <div className="space-y-5 mt-10">
           {posts.map((post) => (
             <Card key={post.id}>
               <CardHeader>
@@ -55,7 +76,27 @@ export default function Index() {
                 <Button variant={"secondary"} asChild>
                   <Link to={`/posts/edit/${post.id}`}>Edit</Link>
                 </Button>
-                <Button variant={"destructive"}>Delete</Button>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="destructive">Delete Post</Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Are you absolutely sure?</DialogTitle>
+                      <DialogDescription>
+                        This action cannot be undone. This will permanently
+                        delete this blog post.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                      <Form method="POST">
+                        <input type="hidden" name="id" value={post.id} />
+                        <Button variant={"destructive"}>Confirm</Button>
+                      </Form>
+                      <Button>Cancel</Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               </CardFooter>
             </Card>
           ))}
